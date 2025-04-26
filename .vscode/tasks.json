@@ -1,0 +1,43 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "Iniciar Servidor MCP Filesystem",
+        "type": "shell",
+        "command": "npx",
+        "args": [
+          "-y",
+          "@modelcontextprotocol/server-filesystem",
+          "C:/Users/Thiago Lartigau/Desktop",
+          "C:/Users/Thiago Lartigau/Downloads",
+          "C:/Users/Thiago Lartigau/Documents",
+          "C:/Users/Thiago Lartigau/Pictures",
+          "C:/Users/Thiago Lartigau/Videos",
+          "c:/Users/Thiago Lartigau/Desktop/Codigo/MCP/Test 1/Tateti-Interactive-Game",
+          "c:/Users/Thiago Lartigau/Desktop/Codigo/MCP/Test 1"
+        ],
+        "isBackground": true
+      },
+      {
+        "label": "Iniciar Servidor MCP Playwright",
+        "type": "shell",
+        "command": "npx",
+        "args": ["@playwright/mcp@latest"],
+        "isBackground": true
+      },
+      {
+        "label": "Iniciar Servidor MCP GitHub",
+        "type": "shell",
+        "command": "docker",
+        "args": [
+          "run",
+          "-i",
+          "--rm",
+          "-e",
+          "GITHUB_PERSONAL_ACCESS_TOKEN",
+          "ghcr.io/github/github-mcp-server"
+        ],
+        "isBackground": true
+      }
+    ]
+  }
