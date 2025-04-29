@@ -13,7 +13,7 @@
         <h2>Seleccionar el juego</h2>
         <button id="three-by-three">Modo 3x3</button>
         <button id="five-by-five">Modo 5x5</button>
-        <button id="custom-game">Modo Personalizado</button>
+        <button id="custom-game">Personalizado</button>
     </section>
 
     <section id="game-modes" class="hidden">
@@ -31,12 +31,21 @@
             <button id="back-to-menu">Volver al Menú</button>
         </div>
         <div id="mode-custom" class="hidden">
-            <h2>Modo Personalizado</h2>
+            <h2>Personalizado</h2> <!-- ya está actualizado -->
             <div id="board-custom" class="board"></div>
             <button id="reset-custom">Reiniciar</button>
             <button id="back-to-menu">Volver al Menú</button>
         </div>
     </section>
+
+    <!-- Language selection dropdown -->
+    <div id="language-menu" style="margin-top: 20px; text-align: center;">
+      <label for="language-select">🌐 Choose Language:</label>
+      <select id="language-select">
+        <option value="en">English</option>
+        <option value="es">Español</option>
+      </select>
+    </div>
 </div>
 <script src="tateti.js"></script>
 </body>

@@ -16,7 +16,8 @@
           "c:/Users/Thiago Lartigau/Desktop/Codigo/MCP/Test 1/Tateti-Interactive-Game",
           "c:/Users/Thiago Lartigau/Desktop/Codigo/MCP/Test 1"
         ],
-        "isBackground": true
+        "isBackground": true,
+        "problemMatcher": []
       },
       {
         "label": "Iniciar Servidor MCP Playwright",
@@ -38,6 +39,15 @@
           "ghcr.io/github/github-mcp-server"
         ],
         "isBackground": true
+      },
+      {
+        "label": "INICIAR TODOS LOS SERVERS MCP",
+        "type": "shell",
+        "dependsOn": [
+          "Iniciar Servidor MCP Filesystem",
+          "Iniciar Servidor MCP Playwright",
+          "Iniciar Servidor MCP GitHub"
+        ]
       }
     ]
   }
