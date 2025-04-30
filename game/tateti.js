@@ -69,6 +69,31 @@ document.addEventListener("DOMContentLoaded", () => {
     let selectedMode3x3 = null; // 'pvp' | 'vsia' | null
     let iaDifficulty = 'easy';
     const iaDifficultySelect = document.getElementById('ia-difficulty');
+    if (iaDifficultySelect) {
+        iaDifficultySelect.addEventListener('change', (event) => {
+            iaDifficulty = event.target.value;
+            console.log(`Dificultad de IA actualizada a: ${iaDifficulty}`);
+        });
+
+        iaDifficultySelect.addEventListener('mouseover', () => {
+            if (iaDifficultySelect.disabled) {
+                iaDifficultySelect.style.cursor = 'not-allowed';
+            } else {
+                iaDifficultySelect.style.cursor = 'pointer';
+            }
+        });
+
+        iaDifficultySelect.addEventListener('mouseout', () => {
+            iaDifficultySelect.style.cursor = '';
+        });
+    }
+
+    // Bloquear el menú de selección de dificultad durante la partida
+    function bloquearMenuDificultad(bloquear) {
+        if (iaDifficultySelect) {
+            iaDifficultySelect.disabled = bloquear;
+        }
+    }
 
     // Mostrar el menú de dificultad solo al tocar Vs IA
     const vsIAButton = document.getElementById("vs-ia-3x3");
@@ -77,6 +102,7 @@ document.addEventListener("DOMContentLoaded", () => {
         selectedMode3x3 = 'vsia';
         create3x3Board();
         if (iaDifficultySelect) iaDifficultySelect.classList.remove('hidden');
+        bloquearMenuDificultad(false); // Desbloquear al iniciar el modo VS IA
     });
 
     // Ocultar el menú de dificultad al tocar PvP
@@ -86,6 +112,7 @@ document.addEventListener("DOMContentLoaded", () => {
         selectedMode3x3 = 'pvp';
         create3x3Board();
         if (iaDifficultySelect) iaDifficultySelect.classList.add('hidden');
+        bloquearMenuDificultad(false); // Desbloquear al cambiar a PvP
     });
 
     // Al iniciar, ocultar el menú de dificultad
@@ -198,15 +225,52 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function makeIAMove() {
-        let maxDepth = null;
-        if (iaDifficulty === 'easy') maxDepth = 1;
-        else if (iaDifficulty === 'normal') maxDepth = 2;
-        else if (iaDifficulty === 'hard') maxDepth = 4;
-        // Imposible: maxDepth = null (sin límite)
-        makeIAMoveWithDepth(maxDepth);
+        console.log('Turno de la IA. Nivel de dificultad:', iaDifficulty);
+
+        bloquearMenuDificultad(true); // Bloquear durante la partida
+
+        // Validar que el nivel de dificultad sea válido
+        const validDifficulties = ['easy', 'normal', 'hard', 'impossible'];
+        if (!validDifficulties.includes(iaDifficulty)) {
+            console.error('Nivel de dificultad inválido:', iaDifficulty);
+            return;
+        }
+
+        // Lógica para cada nivel de dificultad
+        switch (iaDifficulty) {
+            case 'easy':
+                realizarMovimientoAleatorio();
+                break;
+            case 'normal':
+                realizarMovimientoEstrategico(2);
+                break;
+            case 'hard':
+                realizarMovimientoEstrategico(4);
+                break;
+            case 'impossible':
+                realizarMovimientoEstrategico(null); // Sin límite de profundidad
+                break;
+        }
     }
 
-    function makeIAMoveWithDepth(maxDepth) {
+    function realizarMovimientoAleatorio() {
+        console.log('Ejecutando nivel fácil (movimiento aleatorio)');
+        const availableMoves = [];
+        for (let row = 0; row < 3; row++) {
+            for (let col = 0; col < 3; col++) {
+                if (!boardState[row][col]) {
+                    availableMoves.push({ row, col });
+                }
+            }
+        }
+        if (availableMoves.length > 0) {
+            const randomMove = availableMoves[Math.floor(Math.random() * availableMoves.length)];
+            playIAMove(randomMove.row, randomMove.col);
+        }
+    }
+
+    function realizarMovimientoEstrategico(maxDepth) {
+        console.log(`Ejecutando nivel avanzado con profundidad máxima: ${maxDepth}`);
         let bestScore = -Infinity;
         let move = null;
         for (let row = 0; row < 3; row++) {
@@ -305,12 +369,14 @@ document.addEventListener("DOMContentLoaded", () => {
         const winnerMessage = document.getElementById("winner-message");
         winnerMessage.classList.add("hidden");
         winnerMessage.textContent = "";
+        bloquearMenuDificultad(false); // Desbloquear al reiniciar
     });
 
     backToMenu.addEventListener("click", () => {
         mode3x3.classList.add("hidden");
         gameModes.classList.add("hidden");
         menu.classList.remove("hidden");
+        bloquearMenuDificultad(false); // Desbloquear al volver al menú principal
     });
 
     document.getElementById("three-by-three").addEventListener("click", () => {
@@ -376,6 +442,7 @@ document.addEventListener("DOMContentLoaded", () => {
             difficultyBtns.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             iaDifficulty = btn.getAttribute('data-difficulty');
+            console.log(`Dificultad seleccionada: ${iaDifficulty}`); // Registro para verificar la selección
         });
     });
 

@@ -32,4 +32,19 @@ Se realizaron pruebas manuales para verificar el correcto funcionamiento del jue
 ### 6. Documentación Inicial
 Se creó este archivo `README.md` para documentar el proceso de desarrollo y proporcionar una visión general del proyecto.
 
+## Cambios Recientes
+
+### 7. Implementación de la Selección de Dificultad
+Se agregó un menú desplegable para seleccionar el nivel de dificultad de la IA. Los niveles disponibles son:
+- Fácil
+- Normal
+- Difícil
+- Imposible
+
+### 8. Bloqueo del Menú de Dificultad Durante la Partida
+El menú de selección de dificultad ahora se bloquea automáticamente durante la partida en el modo VS IA. Se desbloquea al reiniciar el juego, cambiar al modo PvP o regresar al menú principal.
+
+### 9. Indicador Visual de Bloqueo
+Cuando el menú de selección de dificultad está bloqueado, el cursor cambia a un estilo visual de "no permitido" (`not-allowed`) al pasar sobre él, indicando al usuario que no puede interactuar con el menú en ese momento.
+
 
