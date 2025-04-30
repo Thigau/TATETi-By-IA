@@ -1,34 +1,42 @@
-# 🕹️ Tateti Interactive Game
+# 🕹️ Tateti Interactive Game (v1.0)
 
-¡Bienvenido al juego de Tateti! 🎉 Este es un juego interactivo donde puedes disfrutar del clásico tres en raya con tus amigos o practicar contra la computadora. Aquí te explicamos cómo jugar:
+¡Bienvenido a la versión 1.0 de Tateti Interactivo!
 
-## 📜 Reglas del Juego
-1. El tablero es una cuadrícula de 3x3.
-2. Dos jugadores se turnan para colocar sus símbolos (❌ o ⭕) en una celda vacía.
-3. El objetivo es alinear tres de tus símbolos en una fila, columna o diagonal.
-4. Si todas las celdas están llenas y nadie ha alineado tres símbolos, el juego termina en empate.
+## 🚀 Características principales
+- **Modos de juego:**
+  - 3x3 (PvP y Vs IA)
+  - 5x5 y Personalizado (solo PvP)
+- **Dificultad IA ajustable:**
+  - Fácil: IA muy ganable, solo ve el próximo movimiento.
+  - Normal: IA ve dos movimientos adelante, puede cometer errores.
+  - Difícil: IA ve cuatro movimientos adelante, es desafiante pero ganable.
+  - Imposible: IA perfecta, nunca pierde (Minimax sin límite).
+- **Interfaz intuitiva:**
+  - Botones grandes y menú de dificultad con estilo consistente.
+  - Mensajes claros para selección de modo y final de partida.
+- **Soporte multilenguaje:** Español e Inglés.
+- **Responsive:** Adaptado para escritorio y móvil.
 
-## 🚀 Cómo Jugar
-1. **Inicia el juego**:
-   - Abre el archivo `tateti.html` en tu navegador.
-2. **Selecciona tu modo de juego**:
-   - 🧑‍🤝‍🧑 **Jugador vs Jugador**: Juega contra un amigo.
-   - 🤖 **Jugador vs Computadora**: Practica contra la IA.
-3. **Haz tu movimiento**:
-   - Haz clic en una celda vacía para colocar tu símbolo.
-4. **Gana o empata**:
-   - ¡Alinea tres símbolos para ganar o llena el tablero para empatar!
+## 🎮 Cómo jugar
+1. Elige el modo de juego desde el menú principal.
+2. En 3x3, selecciona PvP o Vs IA. Si eliges Vs IA, selecciona la dificultad.
+3. Haz clic en una celda vacía para colocar tu símbolo (❌ o ⭕).
+4. El objetivo es alinear tres símbolos en fila, columna o diagonal.
+5. El juego se reinicia automáticamente al terminar una partida.
 
-## 🛠️ Requisitos
-- Un navegador web moderno (Chrome, Firefox, Edge, etc.).
-
-## 🎨 Personalización
-- Puedes modificar los estilos en el archivo `tateti.css` para cambiar la apariencia del juego.
-- Edita el archivo `tateti.js` para ajustar la lógica del juego o agregar nuevas características.
+## 🧠 Sobre la IA
+- La IA utiliza el algoritmo Minimax con profundidad limitada según la dificultad.
+- En Imposible, la IA es invencible.
+- En niveles bajos, la IA puede cometer errores y es posible ganarle.
 
 ## 📂 Estructura del Proyecto
-- `tateti.html`: Interfaz principal del juego.
-- `tateti.css`: Estilos del juego.
-- `tateti.js`: Lógica del juego.
+- `game/index.html`: Interfaz principal del juego.
+- `game/tateti.css`: Estilos visuales.
+- `game/tateti.js`: Lógica del juego y de la IA.
 
-¡Diviértete jugando Tateti! 🥳
+## 🛠️ Requisitos
+- Navegador web moderno (Chrome, Firefox, Edge, etc.).
+
+---
+
+¡Disfruta del clásico Tateti con IA ajustable y desafía tus habilidades!
