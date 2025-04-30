@@ -65,6 +65,31 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let currentPlayer = "X";
     let boardState = Array(3).fill(null).map(() => Array(3).fill(null));
+    let isVsIA = false; // Variable para determinar si el modo es VS IA
+    let selectedMode3x3 = null; // 'pvp' | 'vsia' | null
+    let iaDifficulty = 'easy';
+    const iaDifficultySelect = document.getElementById('ia-difficulty');
+
+    // Mostrar el menú de dificultad solo al tocar Vs IA
+    const vsIAButton = document.getElementById("vs-ia-3x3");
+    vsIAButton.addEventListener("click", () => {
+        isVsIA = true;
+        selectedMode3x3 = 'vsia';
+        create3x3Board();
+        if (iaDifficultySelect) iaDifficultySelect.classList.remove('hidden');
+    });
+
+    // Ocultar el menú de dificultad al tocar PvP
+    const pvpButton = document.getElementById("pvp-3x3");
+    pvpButton.addEventListener("click", () => {
+        isVsIA = false;
+        selectedMode3x3 = 'pvp';
+        create3x3Board();
+        if (iaDifficultySelect) iaDifficultySelect.classList.add('hidden');
+    });
+
+    // Al iniciar, ocultar el menú de dificultad
+    if (iaDifficultySelect) iaDifficultySelect.classList.add('hidden');
 
     function checkWinner() {
         // Check rows and columns
@@ -109,6 +134,33 @@ document.addEventListener("DOMContentLoaded", () => {
         return null;
     }
 
+    // --- Memoria simple para la IA ---
+    let userWinningMoves = [];
+
+    function recordUserWin() {
+        // Si el usuario gana, guardar las posiciones de sus movimientos
+        let moves = [];
+        for (let row = 0; row < 3; row++) {
+            for (let col = 0; col < 3; col++) {
+                if (boardState[row][col] === "X") {
+                    moves.push(`${row},${col}`);
+                }
+            }
+        }
+        userWinningMoves.push(...moves);
+    }
+
+    function mostCommonUserMoves() {
+        // Contar las posiciones más frecuentes donde el usuario gana
+        const count = {};
+        userWinningMoves.forEach(pos => {
+            count[pos] = (count[pos] || 0) + 1;
+        });
+        // Ordenar por frecuencia
+        return Object.entries(count).sort((a, b) => b[1] - a[1]).map(([pos]) => pos);
+    }
+
+    // Modificar displayWinner para registrar victorias del usuario
     function displayWinner(winner) {
         const winnerMessage = document.getElementById("winner-message");
         if (winner === "Empate") {
@@ -121,37 +173,131 @@ document.addEventListener("DOMContentLoaded", () => {
             winnerMessage.textContent = `${winner} ${winText}`;
             winnerMessage.classList.remove("hidden", "tie");
             winnerMessage.classList.add("winner");
+            if (winner === "X" && isVsIA) {
+                recordUserWin();
+            }
         }
         // Auto-reset game after showing result
         setTimeout(() => {
-            reset3x3.click();
-        }, 2000);
+            // Reiniciar el tablero sin disparar el evento click del botón
+            create3x3Board();
+            const winnerMessage = document.getElementById("winner-message");
+            winnerMessage.classList.add("hidden");
+            winnerMessage.textContent = "";
+            // Mantener la animación solo en el botón seleccionado
+            const buttonGroup = document.querySelector('.button-group');
+            if (buttonGroup) {
+                buttonGroup.querySelectorAll('button').forEach(button => button.classList.remove('active'));
+                if (selectedMode3x3 === 'pvp') {
+                    document.getElementById('pvp-3x3').classList.add('active');
+                } else if (selectedMode3x3 === 'vsia') {
+                    document.getElementById('vs-ia-3x3').classList.add('active');
+                }
+            }
+        }, 700);
     }
 
-    function create3x3Board() {
-        board3x3.innerHTML = "";
-        boardState = Array(3).fill(null).map(() => Array(3).fill(null));
-        currentPlayer = "X";
+    function makeIAMove() {
+        let maxDepth = null;
+        if (iaDifficulty === 'easy') maxDepth = 1;
+        else if (iaDifficulty === 'normal') maxDepth = 2;
+        else if (iaDifficulty === 'hard') maxDepth = 4;
+        // Imposible: maxDepth = null (sin límite)
+        makeIAMoveWithDepth(maxDepth);
+    }
 
+    function makeIAMoveWithDepth(maxDepth) {
+        let bestScore = -Infinity;
+        let move = null;
         for (let row = 0; row < 3; row++) {
             for (let col = 0; col < 3; col++) {
-                const cell = document.createElement("div");
-                cell.classList.add("cell");
-                cell.addEventListener("click", () => {
-                    if (!cell.textContent && !checkWinner()) {
-                        cell.textContent = currentPlayer;
-                        boardState[row][col] = currentPlayer;
-                        const winner = checkWinner();
-                        if (winner) {
-                            displayWinner(winner);
-                        } else {
-                            currentPlayer = currentPlayer === "X" ? "O" : "X";
-                        }
+                if (!boardState[row][col]) {
+                    boardState[row][col] = "O";
+                    let score = minimax(boardState, 0, false, maxDepth);
+                    boardState[row][col] = null;
+                    if (score > bestScore) {
+                        bestScore = score;
+                        move = { row, col };
                     }
-                });
-                board3x3.appendChild(cell);
+                }
             }
         }
+        if (move) {
+            playIAMove(move.row, move.col);
+        }
+    }
+
+    function minimax(state, depth, isMaximizing, maxDepth) {
+        const winner = getMinimaxWinner(state);
+        if (winner !== null) {
+            if (winner === "O") return 10 - depth;
+            if (winner === "X") return depth - 10;
+            if (winner === "Empate") return 0;
+        }
+        if (maxDepth !== null && depth >= maxDepth) {
+            return 0; // No evalúa más allá de la profundidad máxima
+        }
+        if (isMaximizing) {
+            let bestScore = -Infinity;
+            for (let row = 0; row < 3; row++) {
+                for (let col = 0; col < 3; col++) {
+                    if (!state[row][col]) {
+                        state[row][col] = "O";
+                        let score = minimax(state, depth + 1, false, maxDepth);
+                        state[row][col] = null;
+                        bestScore = Math.max(score, bestScore);
+                    }
+                }
+            }
+            return bestScore;
+        } else {
+            let bestScore = Infinity;
+            for (let row = 0; row < 3; row++) {
+                for (let col = 0; col < 3; col++) {
+                    if (!state[row][col]) {
+                        state[row][col] = "X";
+                        let score = minimax(state, depth + 1, true, maxDepth);
+                        state[row][col] = null;
+                        bestScore = Math.min(score, bestScore);
+                    }
+                }
+            }
+            return bestScore;
+        }
+    }
+
+    function getMinimaxWinner(state) {
+        // Chequear filas y columnas
+        for (let i = 0; i < 3; i++) {
+            if (state[i][0] && state[i][0] === state[i][1] && state[i][1] === state[i][2]) return state[i][0];
+            if (state[0][i] && state[0][i] === state[1][i] && state[1][i] === state[2][i]) return state[0][i];
+        }
+        // Chequear diagonales
+        if (state[0][0] && state[0][0] === state[1][1] && state[1][1] === state[2][2]) return state[0][0];
+        if (state[0][2] && state[0][2] === state[1][1] && state[1][1] === state[2][0]) return state[0][2];
+        // Empate
+        if (state.flat().every(cell => cell !== null)) return "Empate";
+        return null;
+    }
+
+    function playIAMove(row, col) {
+        board3x3.classList.add("disabled");
+        const cellIndex = row * 3 + col;
+        const cell = board3x3.children[cellIndex];
+        setTimeout(() => {
+            if (!cell.textContent) {
+                cell.textContent = "O";
+                boardState[row][col] = "O";
+                cell.classList.add("ai");
+                const winner = checkWinner();
+                if (winner) {
+                    displayWinner(winner);
+                } else {
+                    currentPlayer = "X";
+                }
+            }
+            board3x3.classList.remove("disabled");
+        }, 300);
     }
 
     reset3x3.addEventListener("click", () => {
@@ -171,6 +317,73 @@ document.addEventListener("DOMContentLoaded", () => {
         menu.classList.add("hidden");
         gameModes.classList.remove("hidden");
         mode3x3.classList.remove("hidden");
+        selectedMode3x3 = null;
         create3x3Board();
+    });
+
+    function create3x3Board() {
+        board3x3.innerHTML = "";
+        boardState = Array(3).fill(null).map(() => Array(3).fill(null));
+        currentPlayer = "X";
+        const warning = document.getElementById("warning-message");
+        if (warning) {
+            warning.classList.add("hidden");
+            warning.textContent = "";
+        }
+        for (let row = 0; row < 3; row++) {
+            for (let col = 0; col < 3; col++) {
+                const cell = document.createElement("div");
+                cell.classList.add("cell");
+                cell.addEventListener("click", () => {
+                    if (!selectedMode3x3) {
+                        if (warning) {
+                            warning.textContent = currentLanguage === 'es' ? "Selecciona un modo de juego para jugar." : "Please select a game mode to play.";
+                            warning.classList.remove("hidden");
+                        }
+                        return;
+                    }
+                    if (!cell.textContent && !checkWinner() && (!isVsIA || (isVsIA && currentPlayer === "X"))) {
+                        cell.textContent = "X";
+                        boardState[row][col] = "X";
+                        cell.classList.add("user");
+                        const winner = checkWinner();
+                        if (winner) {
+                            displayWinner(winner);
+                        } else {
+                            currentPlayer = "O";
+                            // Si es VS IA y ahora es turno de la IA, hacer que la IA juegue
+                            if (isVsIA && currentPlayer === "O") {
+                                setTimeout(() => {
+                                    makeIAMove();
+                                }, 300);
+                            }
+                        }
+                    }
+                });
+                board3x3.appendChild(cell);
+            }
+        }
+        // Si es VS IA y la IA debe empezar (opcional, si quieres que la IA pueda ser X)
+        // if (isVsIA && currentPlayer === "O") {
+        //     setTimeout(() => { makeIAMove(); }, 300);
+        // }
+    }
+
+    // Lógica para los botones de dificultad
+    const difficultyBtns = document.querySelectorAll('.difficulty-btn');
+    difficultyBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            difficultyBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            iaDifficulty = btn.getAttribute('data-difficulty');
+        });
+    });
+
+    const buttonGroup = document.querySelector('.button-group');
+    buttonGroup.addEventListener('click', (event) => {
+        if (event.target.tagName === 'BUTTON') {
+            buttonGroup.querySelectorAll('button').forEach(button => button.classList.remove('active'));
+            event.target.classList.add('active');
+        }
     });
 });

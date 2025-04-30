@@ -23,9 +23,20 @@
     <section id="game-modes" class="hidden">
         <div id="mode-3x3" class="hidden">
             <h2>Modo 3x3</h2>
+            <div id="warning-message" class="hidden" style="color: #ff8c00; text-align: center; margin-bottom: 0.5rem;"></div>
             <div id="winner-message" class="hidden">¡Ha ganado!</div>
             <div id="board-3x3" class="board"></div>
-            <button id="reset-3x3">Reiniciar</button>
+            <div class="button-group">
+                <button id="pvp-3x3">PvP</button>
+                <button id="reset-3x3">Reiniciar</button>
+                <button id="vs-ia-3x3">Vs IA</button>
+                <select id="ia-difficulty" class="styled-select hidden">
+                    <option value="easy">Fácil</option>
+                    <option value="normal">Normal</option>
+                    <option value="hard">Difícil</option>
+                    <option value="impossible">Imposible</option>
+                </select>
+            </div>
             <button id="back-to-menu">Volver al Menú</button>
         </div>
         <div id="mode-5x5" class="hidden">

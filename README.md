@@ -1,42 +1,25 @@
-# 🕹️ Tateti Interactive Game (v1.0)
+# TATETi-By-IA
 
-¡Bienvenido a la versión 1.0 de Tateti Interactivo!
+Este proyecto es un juego interactivo de Ta-Te-Ti desarrollado con HTML, CSS y JavaScript. A continuación, se documentan los cambios realizados y se establece una hoja de ruta para futuras mejoras.
 
-## 🚀 Características principales
-- **Modos de juego:**
-  - 3x3 (PvP y Vs IA)
-  - 5x5 y Personalizado (solo PvP)
-- **Dificultad IA ajustable:**
-  - Fácil: IA muy ganable, solo ve el próximo movimiento.
-  - Normal: IA ve dos movimientos adelante, puede cometer errores.
-  - Difícil: IA ve cuatro movimientos adelante, es desafiante pero ganable.
-  - Imposible: IA perfecta, nunca pierde (Minimax sin límite).
-- **Interfaz intuitiva:**
-  - Botones grandes y menú de dificultad con estilo consistente.
-  - Mensajes claros para selección de modo y final de partida.
-- **Soporte multilenguaje:** Español e Inglés.
-- **Responsive:** Adaptado para escritorio y móvil.
+## Cambios realizados
 
-## 🎮 Cómo jugar
-1. Elige el modo de juego desde el menú principal.
-2. En 3x3, selecciona PvP o Vs IA. Si eliges Vs IA, selecciona la dificultad.
-3. Haz clic en una celda vacía para colocar tu símbolo (❌ o ⭕).
-4. El objetivo es alinear tres símbolos en fila, columna o diagonal.
-5. El juego se reinicia automáticamente al terminar una partida.
+1. **Subida inicial del proyecto al repositorio**: Se subió todo el contenido del workspace al repositorio de GitHub.
 
-## 🧠 Sobre la IA
-- La IA utiliza el algoritmo Minimax con profundidad limitada según la dificultad.
-- En Imposible, la IA es invencible.
-- En niveles bajos, la IA puede cometer errores y es posible ganarle.
+## Hoja de ruta
 
-## 📂 Estructura del Proyecto
-- `game/index.html`: Interfaz principal del juego.
-- `game/tateti.css`: Estilos visuales.
-- `game/tateti.js`: Lógica del juego y de la IA.
+- [ ] Mejorar el diseño visual del juego en `tateti.css`.
+- [ ] Optimizar la lógica del juego en `tateti.js`.
+- [ ] Agregar pruebas unitarias para garantizar la calidad del código.
+- [ ] Implementar una versión multijugador en línea.
+- [ ] Traducir la interfaz del juego a múltiples idiomas.
 
-## 🛠️ Requisitos
-- Navegador web moderno (Chrome, Firefox, Edge, etc.).
+## Cómo contribuir
 
----
+1. Haz un fork del repositorio.
+2. Crea una rama para tu contribución: `git checkout -b feature/nueva-funcionalidad`.
+3. Realiza tus cambios y haz un commit: `git commit -m 'Agrega nueva funcionalidad'`.
+4. Sube tus cambios: `git push origin feature/nueva-funcionalidad`.
+5. Abre un Pull Request en este repositorio.
 
-¡Disfruta del clásico Tateti con IA ajustable y desafía tus habilidades!
+¡Gracias por contribuir!
