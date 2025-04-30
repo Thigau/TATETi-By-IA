@@ -97,22 +97,83 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Mostrar el menú de dificultad solo al tocar Vs IA
     const vsIAButton = document.getElementById("vs-ia-3x3");
-    vsIAButton.addEventListener("click", () => {
-        isVsIA = true;
-        selectedMode3x3 = 'vsia';
-        create3x3Board();
-        if (iaDifficultySelect) iaDifficultySelect.classList.remove('hidden');
-        bloquearMenuDificultad(false); // Desbloquear al iniciar el modo VS IA
+    const pvpButton = document.getElementById("pvp-3x3");
+
+    function mostrarConfirmacionInicioJuego(modo) {
+        const confirmationOverlay = document.createElement("div");
+        confirmationOverlay.id = "confirmation-overlay";
+        confirmationOverlay.style.position = "absolute";
+        confirmationOverlay.style.top = "50%";
+        confirmationOverlay.style.left = "50%";
+        confirmationOverlay.style.transform = "translate(-50%, -50%)";
+        confirmationOverlay.style.zIndex = "1";
+        confirmationOverlay.style.width = "250px";
+        confirmationOverlay.style.height = "150px";
+        confirmationOverlay.style.backgroundColor = "#4CAF50"; // Verde llamativo que combina con la página
+        confirmationOverlay.style.color = "white"; // Texto blanco para buen contraste
+        confirmationOverlay.style.padding = "20px";
+        confirmationOverlay.style.borderRadius = "10px";
+        confirmationOverlay.style.textAlign = "center";
+        confirmationOverlay.style.display = "flex";
+        confirmationOverlay.style.flexDirection = "column";
+
+        const message = document.createElement("p");
+        message.textContent = `¿Deseas comenzar el juego en modo ${modo}?`;
+        confirmationOverlay.appendChild(message);
+
+        const buttonContainer = document.createElement("div");
+        buttonContainer.style.display = "flex";
+        buttonContainer.style.justifyContent = "center";
+        buttonContainer.style.marginTop = "20px";
+
+        const yesButton = document.createElement("button");
+        yesButton.textContent = "Sí";
+        yesButton.style.margin = "0 10px";
+        yesButton.addEventListener("click", () => {
+            document.body.removeChild(confirmationOverlay);
+            if (modo === 'PvP') {
+                isVsIA = false;
+                selectedMode3x3 = 'pvp';
+                if (iaDifficultySelect) iaDifficultySelect.classList.add('hidden');
+            } else if (modo === 'VS IA') {
+                isVsIA = true;
+                selectedMode3x3 = 'vsia';
+                if (iaDifficultySelect) iaDifficultySelect.classList.remove('hidden');
+            }
+            create3x3Board();
+        });
+        buttonContainer.appendChild(yesButton);
+
+        const noButton = document.createElement("button");
+        noButton.textContent = "No";
+        noButton.style.margin = "0 10px";
+        noButton.addEventListener("click", () => {
+            document.body.removeChild(confirmationOverlay);
+        });
+        buttonContainer.appendChild(noButton);
+        confirmationOverlay.appendChild(buttonContainer);
+
+        document.body.appendChild(confirmationOverlay);
+
+        // Deshabilitar las casillas mientras el mensaje está visible
+        const cells = document.querySelectorAll(".cell");
+        cells.forEach(cell => cell.style.pointerEvents = "none");
+
+        // Rehabilitar las casillas cuando el mensaje desaparezca
+        yesButton.addEventListener("click", () => {
+            cells.forEach(cell => cell.style.pointerEvents = "auto");
+        });
+        noButton.addEventListener("click", () => {
+            cells.forEach(cell => cell.style.pointerEvents = "auto");
+        });
+    }
+
+    pvpButton.addEventListener("click", () => {
+        mostrarConfirmacionInicioJuego('PvP');
     });
 
-    // Ocultar el menú de dificultad al tocar PvP
-    const pvpButton = document.getElementById("pvp-3x3");
-    pvpButton.addEventListener("click", () => {
-        isVsIA = false;
-        selectedMode3x3 = 'pvp';
-        create3x3Board();
-        if (iaDifficultySelect) iaDifficultySelect.classList.add('hidden');
-        bloquearMenuDificultad(false); // Desbloquear al cambiar a PvP
+    vsIAButton.addEventListener("click", () => {
+        mostrarConfirmacionInicioJuego('VS IA');
     });
 
     // Al iniciar, ocultar el menú de dificultad
@@ -221,6 +282,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     document.getElementById('vs-ia-3x3').classList.add('active');
                 }
             }
+            // Desbloquear el menú de selección de dificultad al finalizar el juego
+            bloquearMenuDificultad(false);
         }, 700);
     }
 
@@ -387,10 +450,48 @@ document.addEventListener("DOMContentLoaded", () => {
         create3x3Board();
     });
 
+    // Seleccionar aleatoriamente el símbolo inicial para cada partida
+    function seleccionarSimboloInicial() {
+        currentPlayer = Math.random() < 0.5 ? "X" : "O";
+        console.log(`El símbolo inicial es: ${currentPlayer}`);
+    }
+
+    // Mostrar a quién le toca el turno
+    function mostrarTurnoActual() {
+        const turnoContainer = document.getElementById("turno-container");
+        if (!turnoContainer) {
+            console.error("El contenedor 'turno-container' no se encuentra en el DOM.");
+            return;
+        }
+        if (!isVsIA) {
+            turnoContainer.textContent = ""; // Limpiar el mensaje si no es VS IA
+            return;
+        }
+        const mensaje = currentPlayer === "X" ? (currentLanguage === 'es' ? "Turno: Usuario" : "Turn: User") : (currentLanguage === 'es' ? "Turno: IA" : "Turn: AI");
+        turnoContainer.textContent = mensaje;
+    }
+
+    function actualizarTurno() {
+        currentPlayer = currentPlayer === "X" ? "O" : "X";
+        mostrarTurnoActual();
+
+        // Si es VS IA y es el turno de la IA, hacer que la IA juegue
+        if (isVsIA && currentPlayer === "O") {
+            setTimeout(() => {
+                makeIAMove();
+                currentPlayer = "X"; // Cambiar el turno de vuelta al usuario después del movimiento de la IA
+                mostrarTurnoActual(); // Actualizar el turno después del movimiento de la IA
+            }, 300);
+        }
+    }
+
+    // Llamar a mostrarTurnoActual en los momentos clave
     function create3x3Board() {
         board3x3.innerHTML = "";
         boardState = Array(3).fill(null).map(() => Array(3).fill(null));
-        currentPlayer = "X";
+        seleccionarSimboloInicial(); // Asignar símbolo inicial aleatorio
+        document.getElementById("mode-3x3").classList.remove("hidden"); // Asegurarse de que el contenedor esté visible
+        mostrarTurnoActual(); // Mostrar el turno inicial
         const warning = document.getElementById("warning-message");
         if (warning) {
             warning.classList.add("hidden");
@@ -409,30 +510,28 @@ document.addEventListener("DOMContentLoaded", () => {
                         return;
                     }
                     if (!cell.textContent && !checkWinner() && (!isVsIA || (isVsIA && currentPlayer === "X"))) {
-                        cell.textContent = "X";
-                        boardState[row][col] = "X";
+                        cell.textContent = currentPlayer;
+                        boardState[row][col] = currentPlayer;
                         cell.classList.add("user");
                         const winner = checkWinner();
                         if (winner) {
                             displayWinner(winner);
                         } else {
-                            currentPlayer = "O";
-                            // Si es VS IA y ahora es turno de la IA, hacer que la IA juegue
-                            if (isVsIA && currentPlayer === "O") {
-                                setTimeout(() => {
-                                    makeIAMove();
-                                }, 300);
-                            }
+                            actualizarTurno(); // Actualizar el turno después de cada movimiento
                         }
                     }
                 });
                 board3x3.appendChild(cell);
             }
         }
-        // Si es VS IA y la IA debe empezar (opcional, si quieres que la IA pueda ser X)
-        // if (isVsIA && currentPlayer === "O") {
-        //     setTimeout(() => { makeIAMove(); }, 300);
-        // }
+
+        // Si es VS IA y la IA debe empezar
+        if (isVsIA && currentPlayer === "O") {
+            setTimeout(() => {
+                makeIAMove();
+                mostrarTurnoActual(); // Asegurar que el turno se actualice después del movimiento inicial de la IA
+            }, 300);
+        }
     }
 
     // Lógica para los botones de dificultad
