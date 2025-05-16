@@ -1,1 +1,343 @@
-/* CSS content */
+body {
+    font-family: 'Ubuntu', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #e6f7ff;
+}
+
+.menu {
+    text-align: center;
+    background-color: #fff;
+    padding: 3rem;
+    border-radius: 15px;
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1);
+    width: 400px;
+}
+
+button {
+    /* Responsive button: full width up to max 200px, fixed order ensures reset above back */
+    display: block;
+    width: 100%;
+    max-width: 200px;
+    white-space: nowrap;
+    margin: 1.5rem auto;
+    padding: 1rem 2rem;
+    font-size: 1.2rem;
+    border: none;
+    border-radius: 8px;
+    background-color: #4682b4;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #5a9bd3;
+}
+
+.hidden {
+    display: none;
+}
+
+#custom-game {
+    margin-top: 1rem;
+}
+
+h1 {
+    text-align: center;
+    font-size: 2.5rem;
+    color: #333;
+    margin-bottom: 1rem;
+}
+
+h2 {
+    text-align: center;
+    font-size: 1.8rem;
+    color: #555;
+    margin-bottom: 1rem;
+}
+
+.cell {
+    width: 100px;
+    height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2rem;
+    font-weight: bold;
+    border: 1px solid #333;
+    cursor: pointer;
+    user-select: none;
+    background-color: #f9f9f9;
+    transition: background-color 0.3s;
+}
+
+.cell:hover {
+    background-color: #e0e0e0;
+}
+
+.board {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: 5px;
+    margin: 1rem auto;
+    width: 100%;
+    max-width: 310px;
+    aspect-ratio: 1 / 1;
+    justify-content: center; /* Centrar el tablero horizontalmente */
+    align-items: center;     /* Centrar el tablero verticalmente */
+}
+
+#board-5x5.board {
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(5, 1fr);
+    max-width: 520px;
+    margin: 1rem auto;
+    justify-content: center;
+    align-items: center;
+}
+
+#mode-3x3 {
+    position: relative;
+}
+
+#winner-message {
+    position: absolute;
+    left: 50%;
+    top: 38%;
+    transform: translate(-50%, -50%);
+    z-index: 20;
+    min-width: 180px;
+    max-width: 90vw;
+    padding: 1.2rem 2.5rem;
+    border-radius: 1.2rem;
+    font-size: 1.5rem;
+    font-weight: bold;
+    background: #fffbe6;
+    color: #333;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.13);
+    text-align: center;
+    pointer-events: none;
+    transition: none;
+    opacity: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+#winner-message.winner, #winner-message.tie {
+    opacity: 1;
+}
+#winner-message.winner {
+    background: #e0ffe0;
+    color: #2e7d32;
+    border: 2px solid #4caf50;
+}
+#winner-message.tie {
+    background: #e3e3ff;
+    color: #1a237e;
+    border: 2px solid #3f51b5;
+}
+
+#board-3x3.disabled {
+    pointer-events: none;
+    opacity: 0.7;
+    filter: blur(1px);
+    transition: opacity 0.3s, filter 0.3s;
+}
+
+@keyframes smooth-appear {
+    0% {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* Style for the language menu */
+#language-menu {
+  text-align: center;
+  margin-top: 20px;
+  font-family: 'Arial', sans-serif;
+  font-size: 16px;
+  color: #333;
+}
+
+#language-menu label {
+  margin-right: 10px;
+  font-weight: bold;
+  color: #007BFF;
+}
+
+#language-select {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 14px;
+  background-color: #f9f9f9;
+  color: #333;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+#language-select:hover {
+  border-color: #007BFF;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+#language-select:focus {
+  outline: none;
+  border-color: #0056b3;
+  box-shadow: 0 0 8px rgba(0, 86, 179, 0.7);
+}
+
+/* Responsive adjustments */
+@media (max-width: 400px) {
+  .menu {
+    width: 90%;
+    padding: 1.5rem;
+  }
+  button {
+    font-size: 1rem;
+    padding: 0.75rem 1.5rem;
+  }
+  h1 {
+    font-size: 2rem;
+  }
+  h2 {
+    font-size: 1.4rem;
+  }
+}
+.button-group {
+    display: flex;
+    justify-content: center;
+    align-items: center; /* Alinear verticalmente los elementos */
+    gap: 1rem;
+    width: 100%;
+    max-width: 310px;
+    margin: 1rem auto;
+}
+
+.button-group button {
+    flex: 1;
+    text-align: center; /* Asegurar que el texto esté centrado */
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.button-group button.active {
+    background-color: #ff8c00; /* Naranja brillante para destacar */
+    transform: scale(1.1); /* Aumentar ligeramente el tamaño */
+    box-shadow: 0 0 12px rgba(255, 140, 0, 0.6); /* Sombra más intensa */
+}
+.difficulty-group {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    margin-left: 1rem;
+}
+.difficulty-btn {
+    background-color: #4682b4;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 0.7rem 1.2rem;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+}
+.difficulty-btn:hover {
+    background-color: #5a9bd3;
+}
+.difficulty-btn.active {
+    background-color: #ff8c00;
+    color: #fff;
+    transform: scale(1.08);
+    box-shadow: 0 0 10px rgba(255,140,0,0.3);
+}
+@media (max-width: 600px) {
+    .difficulty-group {
+        flex-direction: column;
+        gap: 0.2rem;
+        margin-left: 0;
+        margin-top: 0.5rem;
+    }
+    .button-group {
+        flex-wrap: wrap;
+    }
+}
+.styled-select {
+    background-color: #4682b4;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.95rem;
+    cursor: pointer;
+    margin-left: 0.5rem;
+    margin-bottom: 0; /* Eliminar margen inferior si lo hubiera */
+    align-self: center; /* Asegura alineación vertical */
+    transition: background-color 0.3s, transform 0.2s;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    min-width: 90px;
+    max-width: 120px;
+    height: 2.2rem;
+    vertical-align: middle;
+    text-align: center;
+}
+.styled-select:hover, .styled-select:focus {
+    background-color: #5a9bd3;
+    outline: none;
+}
+.styled-select option {
+    color: #333;
+    background: #fff;
+}
+@media (max-width: 600px) {
+    .styled-select {
+        margin-left: 0;
+        margin-top: 0.5rem;
+        width: 100%;
+    }
+}
+
+/* Style for the disable confirmation checkbox */
+#disable-confirmation {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #4682b4;
+    border-radius: 4px;
+    background-color: #fff;
+    cursor: pointer;
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+#disable-confirmation:checked {
+    background-color: #4682b4;
+    border-color: #5a9bd3;
+    position: relative;
+}
+
+#disable-confirmation:checked::after {
+    content: '\2713';
+    color: white;
+    font-size: 14px;
+    position: absolute;
+    top: 2px;
+    left: 4px;
+}
+
+/* Updated style for active mode buttons */
+button.active {
+    background-color: #32cd32;
+    color: white;
+}
