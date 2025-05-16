@@ -61,3 +61,8 @@ Se aseguró que los tableros de 3x3 y 5x5 sean independientes, garantizando que 
 
 ### 14. Generación del Tablero 3x3
 Se completó la función `create3x3Board` para garantizar que el tablero de 3x3 se genere y funcione correctamente.
+
+### 15. Implementación del Checkbox para Deshabilitar Confirmación
+Se añadió un checkbox en la superposición de confirmación para iniciar un juego, permitiendo a los usuarios deshabilitar esta confirmación si lo desean. Además:
+- Se ajustaron los estilos del checkbox y los botones para que se adapten al diseño general del juego.
+- Se centró la etiqueta del checkbox en relación con el mismo para una mejor alineación visual.
